@@ -697,7 +697,7 @@ const S = {
   subtitle:        { fontSize:14, color:"#888", margin:0 },
   card:            { background:"#fafaf8", borderRadius:16, padding:"20px 16px", marginBottom:16, border:"1px solid #eee" },
   label:           { fontSize:13, fontWeight:600, color:"#555", marginBottom:8 },
-  input:           { width:"100%", padding:"12px 14px", borderRadius:12, border:"1.5px solid #e0e0e0", fontSize:15, outline:"none", boxSizing:"border-box", marginBottom:12, background:"#fff" },
+  input:           { width:"100%", padding:"12px 14px", borderRadius:12, border:"2px solid #c0c0c0", fontSize:15, outline:"none", boxSizing:"border-box", marginBottom:12, background:"#ffffff", color:"#1a1a1a", WebkitTextFillColor:"#1a1a1a", WebkitAppearance:"none" },
   textarea:        { width:"100%", padding:"12px 14px", borderRadius:12, border:"1.5px solid #e0e0e0", fontSize:14, outline:"none", boxSizing:"border-box", resize:"vertical", lineHeight:1.7, fontFamily:"inherit", background:"#fff" },
   btnPrimary:      { width:"100%", padding:"13px", background:"#4a7c59", color:"#fff", border:"none", borderRadius:12, fontSize:15, fontWeight:700, cursor:"pointer" },
   btnGhost:        { padding:"10px 20px", background:"transparent", color:"#4a7c59", border:"1.5px solid #4a7c59", borderRadius:10, fontSize:14, fontWeight:600, cursor:"pointer" },
