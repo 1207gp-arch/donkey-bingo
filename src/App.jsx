@@ -343,14 +343,11 @@ function BingoPage({ member, missions, updateMember, nav, qtPosts }) {
         })}
       </div>
 
-      <div style={{ background:"#fff8e1", border:"1.5px solid #f9a825", borderRadius:14, padding:"14px 16px", marginBottom:16, display:"flex", alignItems:"center", gap:12 }}>
-        <span style={{ fontSize:28 }}>🫏</span>
-        <div>
-          <p style={{ margin:0, fontWeight:700, fontSize:14, color:"#5d4037" }}>당나귀 참석 일정</p>
-          <p style={{ margin:"3px 0 0", fontSize:13, color:"#795548" }}>2026.06.21(일) 오후 3:30</p>
-          <p style={{ margin:"2px 0 0", fontSize:12, color:"#a1887f" }}>장소 : 추후 안내</p>
-          <p style={{ margin:"2px 0 0", fontSize:12, color:"#a1887f" }}>예배 후 바로 · 참석 시 🎫50개</p>
-        </div>
+      <div style={{ background:"#fff8e1", border:"1.5px solid #f9a825", borderRadius:14, padding:"14px 16px", marginBottom:16, textAlign:"center" }}>
+        <p style={{ margin:"0 0 6px", fontWeight:700, fontSize:15, color:"#5d4037" }}>🫏 당나귀 참석 일정</p>
+        <p style={{ margin:"3px 0", fontSize:13, color:"#795548" }}>2026.06.21(일) 오후 3:30</p>
+        <p style={{ margin:"3px 0", fontSize:12, color:"#a1887f" }}>장소 : 추후 안내</p>
+        <p style={{ margin:"3px 0 0", fontSize:12, color:"#a1887f" }}>예배 후 바로 · 참석 시 🎫50개</p>
       </div>
 
       <div style={{ background:"#fff", border:"1.5px solid #e0e0e0", borderRadius:14, padding:"14px 16px", marginBottom:16 }}>
