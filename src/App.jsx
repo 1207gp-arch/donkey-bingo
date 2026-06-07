@@ -244,10 +244,7 @@ function BingoPage({ member, missions, updateMember, nav, qtPosts }) {
   const confirmPw = () => {
     if (pwInput===ADMIN_PASSWORD) {
       if (missions[pendingIdx].talent===null) {
-        // 히든미션 - 관리자 비번 확인
-        if (adminVerifyPw !== "1235") { setAdminVerifyPw(""); setPwError("관리자 비밀번호가 틀렸어요!"); return; }
         if (hiddenTalent === "") { setPwError("달란트를 입력해주세요!"); return; }
-        // 미리보기 단계로
         setHiddenConfirmStep(true);
         return;
       }
@@ -300,12 +297,9 @@ function BingoPage({ member, missions, updateMember, nav, qtPosts }) {
           <div style={S.modal}>
             <p style={{ fontWeight:700, fontSize:15, marginBottom:4 }}>미션 인증</p>
             <p style={{ fontSize:13, color:"#666", marginBottom:14 }}><b>{missions[pendingIdx].name.replace("\n"," ")}</b><br/>관리자 비밀번호를 입력하세요</p>
-            <input style={S.input} type="password" placeholder="비밀번호" value={pwInput} autoFocus onChange={e => { setPwInput(e.target.value); setPwError(""); }} onKeyDown={e => e.key==="Enter"&&confirmPw()} />
+            <input style={S.input} type="password" placeholder="관리자 비밀번호" value={pwInput} autoFocus onChange={e => { setPwInput(e.target.value); setPwError(""); }} onKeyDown={e => e.key==="Enter"&&confirmPw()} />
             {missions[pendingIdx].talent===null && !hiddenConfirmStep && (
-              <div>
-                <input style={{ ...S.input, marginTop:4 }} type="password" placeholder="관리자 비밀번호" value={adminVerifyPw} onChange={e => setAdminVerifyPw(e.target.value)} />
-                <input style={{ ...S.input, marginTop:4 }} type="number" placeholder="달란트 직접 입력 (예: 30)" value={hiddenTalent} onChange={e => setHiddenTalent(e.target.value)} />
-              </div>
+              <input style={{ ...S.input, marginTop:4 }} type="number" placeholder="달란트 입력 (예: 30)" value={hiddenTalent} onChange={e => setHiddenTalent(e.target.value)} />
             )}
             {missions[pendingIdx].talent===null && hiddenConfirmStep && (
               <div style={{ background:"#f0faf4", border:"1.5px solid #4a7c59", borderRadius:12, padding:"12px 14px", marginTop:8, textAlign:"center" }}>
@@ -376,7 +370,7 @@ function BingoPage({ member, missions, updateMember, nav, qtPosts }) {
               <button style={{ position:"absolute", top:2, left:3, background:"none", border:"none", fontSize:9, color:"#aaa", cursor:"pointer", padding:0, lineHeight:1, zIndex:2 }}
                 onClick={e => { e.stopPropagation(); setDescIdx(i); }}>ⓘ</button>
               <span style={S.cellName}>{m.name}</span>
-              <span style={{ ...S.cellTalent, ...(m.talent===null?S.cellTalentHidden:{}) }}>{m.talent!==null?"🎫"+m.talent:"🎫?"}</span>
+              <span style={{ ...S.cellTalent, ...((m.talent==null)?S.cellTalentHidden:{}) }}>{(m.talent!=null)?"🎫"+m.talent:"🎫?"}</span>
             </button>
           );
         })}
