@@ -38,7 +38,7 @@ const MISSION_DESC = {
   "가위바위보\n지혜목자":   "주일 본당 큰 계단으로 올라오시면 새가족 목자를 만날 수 있어요 😄 기회는 단 한 번! 가위바위보에서 이기시면 됩니다!",
   "가위바위보\n명철목자":   "주일 본당 큰 계단으로 올라오시면 새가족 목자를 만날 수 있어요 😄 기회는 단 한 번! 가위바위보에서 이기시면 됩니다!",
   "목장\n단체사진 인증":    "등반하신 분은 등반한 목장, 아직 새가족 교육을 받고 계신 분들은 새가족 목장 전체와 함께 인증사진을 찍어주시면 됩니다 📸 목자에게 사진을 보여주시면 인증 완료!",
-  "동아리참석":             "러닝 동아리(소닉), 봉사 동아리(러빙유), 배드민턴 동아리(비트), 축구 동아리(참청FC), 농구 동아리(브로), 독서 동아리, 댄스 동아리(라움CCD), 필사 동아리(비공식)가 있어요 🏃 동아리 일정은 어플 하단에 따로 적어둘게요! 마음에 드는 동아리에 참석하시면 됩니다 😊",
+  "동아리참석":             "러닝 동아리(소닉), 봉사 동아리(러빙유), 배드민턴 동아리(비트), 축구 동아리(참청FC), 농구 동아리(브로), 독서 동아리, 댄스 동아리(라움CCD), 필사 동아리가 있어요 🏃 동아리 일정은 어플 하단에 따로 적어둘게요! 마음에 드는 동아리에 참석하시면 됩니다 😊",
   "전도":                   "친구를 청년부 예배에 데리고 오시면 돼요 🙌 소중한 사람과 함께 예배드려요!",
   "참청 인스타\n유튜브구독":"하단에 참청 인스타와 참청 유튜브 링크가 있어요 💚 팔로우&구독 해주시면 인증 완료!",
   "🫏당나귀\n참석":        "2026.06.21(일) 오후 3:30에 참석하시면 달란트 50개를 드려요! 꼭 함께해요 🫏✨",
@@ -460,10 +460,10 @@ function ClubPage({ nav }) {
     { emoji:"💚", name:"봉사 동아리 (러빙유)",   schedule:"6/20(토) 주안역 일대 플로깅 13:00 ~ 15:00", insta:"https://www.instagram.com/luvu.turn?igsh=MTdrNHcwZDlkdGFsag==" },
     { emoji:"⚽", name:"축구 동아리 (참청FC)",   schedule:"한 달에 한두 번 풋살", insta:null },
     { emoji:"🏃", name:"러닝 동아리 (소닉)",     schedule:"격주 월요일 · 동구구민운동장 또는 인천대공원", insta:"https://www.instagram.com/sonic__run?igsh=dW04ZHR2MXdyM252&utm_source=qr" },
-    { emoji:"🏀", name:"농구 동아리 (브로)",     schedule:"일정 추후 안내", insta:null },
-    { emoji:"📚", name:"독서 동아리",            schedule:"일정 추후 안내", insta:null },
-    { emoji:"💃", name:"댄스 동아리 (라움 CCD)", schedule:"일정 추후 안내", insta:null },
-    { emoji:"✍️", name:"필사 동아리 (비공식)",   schedule:"새가족팀 문의", insta:null },
+    { emoji:"🏀", name:"농구 동아리 (브로)",     schedule:null, insta:null },
+    { emoji:"📚", name:"독서 동아리",            schedule:null, insta:null },
+    { emoji:"💃", name:"댄스 동아리 (라움 CCD)", schedule:null, insta:null },
+    { emoji:"✍️", name:"필사 동아리",            schedule:"새가족팀 문의", insta:null },
   ];
   return (
     <div style={S.page}>
@@ -478,14 +478,16 @@ function ClubPage({ nav }) {
       </div>
       {clubs.map(club => (
         <div key={club.name} style={{ ...S.card, marginBottom:10 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:8 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:(club.schedule||club.insta)?8:0 }}>
             <span style={{ fontSize:28 }}>{club.emoji}</span>
             <b style={{ fontSize:15, color:"#1a3a2a" }}>{club.name}</b>
           </div>
-          <div style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 12px", background:"#f5faf7", borderRadius:10, marginBottom: club.insta ? 8 : 0 }}>
-            <span style={{ fontSize:13 }}>📅</span>
-            <p style={{ margin:0, fontSize:13, color:"#3a5a45", lineHeight:1.6 }}>{club.schedule}</p>
-          </div>
+          {club.schedule && (
+            <div style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 12px", background:"#f5faf7", borderRadius:10, marginBottom: club.insta ? 8 : 0 }}>
+              <span style={{ fontSize:13 }}>📅</span>
+              <p style={{ margin:0, fontSize:13, color:"#3a5a45", lineHeight:1.6 }}>{club.schedule}</p>
+            </div>
+          )}
           {club.insta && (
             <a href={club.insta} target="_blank" rel="noreferrer"
               style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:6, padding:"8px 12px", borderRadius:10, textDecoration:"none", fontWeight:700, fontSize:13, background:"linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)", color:"#fff" }}>
