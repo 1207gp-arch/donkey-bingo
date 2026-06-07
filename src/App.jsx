@@ -232,17 +232,43 @@ function BingoPage({ member, missions, updateMember, nav, qtPosts }) {
   const [pwError, setPwError] = useState("");
   const [descIdx, setDescIdx] = useState(null);
   const [hiddenTalent, setHiddenTalent] = useState("");
+  const [adminVerifyPw, setAdminVerifyPw] = useState("");
   const bingoCount = checkBingo(member.checked);
 
   const handleCell = i => {
     if (member.checked[i]) applyToggle(i, true);
     else { setPendingIdx(i); setPwInput(""); setPwError(""); setHiddenTalent(""); }
   };
+  const [hiddenConfirmStep, setHiddenConfirmStep] = useState(false);
+
   const confirmPw = () => {
     if (pwInput===ADMIN_PASSWORD) {
-      const override = missions[pendingIdx].talent===null&&hiddenTalent!==""?Number(hiddenTalent):undefined;
-      applyToggle(pendingIdx, false, override); setPendingIdx(null);
+      if (missions[pendingIdx].talent===null) {
+        // 히든미션 - 관리자 비번 확인
+        if (adminVerifyPw !== "1235") { setAdminVerifyPw(""); setPwError("관리자 비밀번호가 틀렸어요!"); return; }
+        if (hiddenTalent === "") { setPwError("달란트를 입력해주세요!"); return; }
+        // 미리보기 단계로
+        setHiddenConfirmStep(true);
+        return;
+      }
+      applyToggle(pendingIdx, false, undefined); setPendingIdx(null);
     } else setPwError("비밀번호가 틀렸습니다");
+  };
+
+  const confirmHidden = () => {
+    const override = Number(hiddenTalent);
+    applyToggle(pendingIdx, false, override);
+    setPendingIdx(null);
+    setHiddenConfirmStep(false);
+    setHiddenTalent("");
+    setAdminVerifyPw("");
+  };
+
+  const cancelHidden = () => {
+    setHiddenConfirmStep(false);
+    setHiddenTalent("");
+    setAdminVerifyPw("");
+    setPwError("");
   };
   const applyToggle = (i, wasChecked, overrideTalent) => {
     const newChecked = [...member.checked]; newChecked[i] = !wasChecked;
@@ -275,8 +301,21 @@ function BingoPage({ member, missions, updateMember, nav, qtPosts }) {
             <p style={{ fontWeight:700, fontSize:15, marginBottom:4 }}>미션 인증</p>
             <p style={{ fontSize:13, color:"#666", marginBottom:14 }}><b>{missions[pendingIdx].name.replace("\n"," ")}</b><br/>관리자 비밀번호를 입력하세요</p>
             <input style={S.input} type="password" placeholder="비밀번호" value={pwInput} autoFocus onChange={e => { setPwInput(e.target.value); setPwError(""); }} onKeyDown={e => e.key==="Enter"&&confirmPw()} />
-            {missions[pendingIdx].talent===null && (
-              <input style={{ ...S.input, marginTop:4 }} type="number" placeholder="달란트 입력 (예: 30)" value={hiddenTalent} onChange={e => setHiddenTalent(e.target.value)} />
+            {missions[pendingIdx].talent===null && !hiddenConfirmStep && (
+              <div>
+                <input style={{ ...S.input, marginTop:4 }} type="password" placeholder="관리자 비밀번호" value={adminVerifyPw} onChange={e => setAdminVerifyPw(e.target.value)} />
+                <input style={{ ...S.input, marginTop:4 }} type="number" placeholder="달란트 직접 입력 (예: 30)" value={hiddenTalent} onChange={e => setHiddenTalent(e.target.value)} />
+              </div>
+            )}
+            {missions[pendingIdx].talent===null && hiddenConfirmStep && (
+              <div style={{ background:"#f0faf4", border:"1.5px solid #4a7c59", borderRadius:12, padding:"12px 14px", marginTop:8, textAlign:"center" }}>
+                <p style={{ margin:"0 0 4px", fontSize:13, color:"#333" }}>🎫 달란트 <b style={{ fontSize:18, color:"#4a7c59" }}>{hiddenTalent}개</b> 지급할까요?</p>
+                <p style={{ margin:"0 0 12px", fontSize:12, color:"#888" }}>확인 후에는 수정이 어려워요</p>
+                <div style={{ display:"flex", gap:8 }}>
+                  <button style={{ flex:1, padding:"10px", background:"#4a7c59", color:"#fff", border:"none", borderRadius:10, fontWeight:700, cursor:"pointer", fontSize:14 }} onClick={confirmHidden}>✓ 확인</button>
+                  <button style={{ flex:1, padding:"10px", background:"#f0f0f0", color:"#555", border:"none", borderRadius:10, cursor:"pointer", fontSize:14 }} onClick={cancelHidden}>✕ 다시 입력</button>
+                </div>
+              </div>
             )}
             {pwError && <p style={{ color:"#e74c3c", fontSize:13 }}>{pwError}</p>}
             <div style={{ display:"flex", gap:8, marginTop:8 }}>
@@ -592,7 +631,7 @@ function AdminPage({ members, setMembers, missions, setMissions, qtPosts, setQtP
             <div key={i} style={{ display:"flex", gap:6, marginBottom:8, alignItems:"center" }}>
               <span style={{ fontSize:12, color:"#aaa", minWidth:20 }}>{i+1}</span>
               <input style={{ ...S.input, marginBottom:0, flex:2, fontSize:13 }} value={m.name} onChange={e=>{ const n=[...editMissions]; n[i]={...n[i],name:e.target.value}; setEditMissions(n); }} />
-              <input style={{ ...S.input, marginBottom:0, width:60, fontSize:13, textAlign:"center" }} placeholder="달란트" type="number" value={m.talent??""} onChange={e=>{ const n=[...editMissions]; n[i]={...n[i],talent:e.target.value===""?null:Number(e.target.value)}; setEditMissions(n); }} />
+              <input style={{ ...S.input, marginBottom:0, width:60, fontSize:13, textAlign:"center" }} placeholder="?" type="number" value={m.talent===null?"":m.talent} onChange={e=>{ const n=[...editMissions]; n[i]={...n[i],talent:e.target.value===""?null:Number(e.target.value)}; setEditMissions(n); }} />
             </div>
           ))}
           <button style={{ ...S.btnPrimary, marginTop:8 }} onClick={saveMissions}>저장하기</button>
