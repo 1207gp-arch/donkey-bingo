@@ -38,7 +38,7 @@ const MISSION_DESC = {
   "가위바위보\n지혜목자":   "주일 본당 큰 계단으로 올라오시면 새가족 목자를 만날 수 있어요 😄 기회는 단 한 번! 가위바위보에서 이기시면 됩니다!",
   "가위바위보\n명철목자":   "주일 본당 큰 계단으로 올라오시면 새가족 목자를 만날 수 있어요 😄 기회는 단 한 번! 가위바위보에서 이기시면 됩니다!",
   "목장\n단체사진 인증":    "등반하신 분은 등반한 목장, 아직 새가족 교육을 받고 계신 분들은 새가족 목장 전체와 함께 인증사진을 찍어주시면 됩니다 📸 목자에게 사진을 보여주시면 인증 완료!",
-  "동아리참석":             "러닝 동아리(소닉), 봉사 동아리(러빙유), 배드민턴 동아리(비트), 축구 동아리(참청FC), 농구 동아리(브로), 독서 동아리, 댄스 동아리(라움CCD), 필사 동아리가 있어요 🏃 동아리 일정은 어플 하단에 따로 적어둘게요! 마음에 드는 동아리에 참석하시면 됩니다 😊",
+  "동아리참석":             "배드민턴 동아리(비트), 봉사 동아리(러빙유), 축구 동아리(참청FC), 러닝 동아리(소닉), 농구 동아리(브로), 댄스 동아리(라움CCD) 그리고 독서 소모임, 필사 소모임이 있어요 🏃 동아리 일정은 어플 하단에 따로 적어둘게요! 마음에 드는 곳에 참석하시면 됩니다 😊",
   "전도":                   "친구를 청년부 예배에 데리고 오시면 돼요 🙌 소중한 사람과 함께 예배드려요!",
   "참청 인스타\n유튜브구독":"하단에 참청 인스타와 참청 유튜브 링크가 있어요 💚 팔로우&구독 해주시면 인증 완료!",
   "🫏당나귀\n참석":        "2026.06.21(일) 오후 3:30에 참석하시면 달란트 50개를 드려요! 꼭 함께해요 🫏✨",
@@ -461,9 +461,9 @@ function ClubPage({ nav }) {
     { emoji:"⚽", name:"축구 동아리 (참청FC)",   schedule:"한 달에 한두 번 풋살", leader:"조한기", phone:"010-9909-5914", insta:null },
     { emoji:"🏃", name:"러닝 동아리 (소닉)",     schedule:"격주 월요일 · 동구구민운동장 또는 인천대공원", leader:"엄태완", phone:"010-9336-3243", insta:"https://www.instagram.com/sonic__run?igsh=dW04ZHR2MXdyM252&utm_source=qr" },
     { emoji:"🏀", name:"농구 동아리 (브로)",     schedule:null, leader:"전성호", phone:"010-3151-2340", insta:null },
-    { emoji:"📚", name:"독서 동아리",            schedule:null, leader:"신현수", phone:"010-2715-8368", insta:null },
     { emoji:"💃", name:"댄스 동아리 (라움 CCD)", schedule:null, leader:"홍수정", phone:"010-4006-9709", insta:null },
-    { emoji:"✍️", name:"필사 동아리",            schedule:null, leader:"김유정", phone:"010-2412-4624", insta:null },
+    { emoji:"📚", name:"독서 소모임",            schedule:null, leader:"신현수", phone:"010-2715-8368", insta:null, note:"리빌딩할 멤버를 찾습니다" },
+    { emoji:"✍️", name:"필사 소모임",            schedule:null, leader:"김유정", phone:"010-2412-4624", insta:null },
   ];
   return (
     <div style={S.page}>
@@ -492,6 +492,12 @@ function ClubPage({ nav }) {
             <div style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 12px", background:"#f5faf7", borderRadius:10 }}>
               <span style={{ fontSize:13 }}>👤</span>
               <p style={{ margin:0, fontSize:13, color:"#3a5a45", lineHeight:1.6 }}>팀장 {club.leader} · <a href={`tel:${club.phone.replace(/-/g,"")}`} style={{ color:"#2563a6", textDecoration:"none", fontWeight:700 }}>{club.phone}</a></p>
+            </div>
+          )}
+          {club.note && (
+            <div style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 12px", background:"#fff4e6", borderRadius:10 }}>
+              <span style={{ fontSize:13 }}>📣</span>
+              <p style={{ margin:0, fontSize:13, color:"#a85d1a", fontWeight:700, lineHeight:1.6 }}>{club.note}</p>
             </div>
           )}
           {club.insta && (
