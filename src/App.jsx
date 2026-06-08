@@ -456,14 +456,14 @@ function VersePage({ member, updateMember, nav }) {
 
 function ClubPage({ nav }) {
   const clubs = [
-    { emoji:"🏸", name:"배드민턴 동아리 (비트)", schedule:"매주 목요일 19:00 ~ 21:20", insta:null },
-    { emoji:"💚", name:"봉사 동아리 (러빙유)",   schedule:"6/20(토) 주안역 일대 플로깅 13:00 ~ 15:00", insta:"https://www.instagram.com/luvu.turn?igsh=MTdrNHcwZDlkdGFsag==" },
-    { emoji:"⚽", name:"축구 동아리 (참청FC)",   schedule:"한 달에 한두 번 풋살", insta:null },
-    { emoji:"🏃", name:"러닝 동아리 (소닉)",     schedule:"격주 월요일 · 동구구민운동장 또는 인천대공원", insta:"https://www.instagram.com/sonic__run?igsh=dW04ZHR2MXdyM252&utm_source=qr" },
-    { emoji:"🏀", name:"농구 동아리 (브로)",     schedule:null, insta:null },
-    { emoji:"📚", name:"독서 동아리",            schedule:null, insta:null },
-    { emoji:"💃", name:"댄스 동아리 (라움 CCD)", schedule:null, insta:null },
-    { emoji:"✍️", name:"필사 동아리",            schedule:"새가족팀 문의", insta:null },
+    { emoji:"🏸", name:"배드민턴 동아리 (비트)", schedule:"매주 목요일 19:00 ~ 21:20", leader:"박준영", phone:"010-3142-9730", insta:null },
+    { emoji:"💚", name:"봉사 동아리 (러빙유)",   schedule:"6/20(토) 주안역 일대 플로깅 13:00 ~ 15:00", leader:"이지윤", phone:"010-6478-1549", insta:"https://www.instagram.com/luvu.turn?igsh=MTdrNHcwZDlkdGFsag==" },
+    { emoji:"⚽", name:"축구 동아리 (참청FC)",   schedule:"한 달에 한두 번 풋살", leader:"조한기", phone:"010-9909-5914", insta:null },
+    { emoji:"🏃", name:"러닝 동아리 (소닉)",     schedule:"격주 월요일 · 동구구민운동장 또는 인천대공원", leader:"엄태완", phone:"010-9336-3243", insta:"https://www.instagram.com/sonic__run?igsh=dW04ZHR2MXdyM252&utm_source=qr" },
+    { emoji:"🏀", name:"농구 동아리 (브로)",     schedule:null, leader:"전성호", phone:"010-3151-2340", insta:null },
+    { emoji:"📚", name:"독서 동아리",            schedule:null, leader:"신현수", phone:"010-2715-8368", insta:null },
+    { emoji:"💃", name:"댄스 동아리 (라움 CCD)", schedule:null, leader:"홍수정", phone:"010-4006-9709", insta:null },
+    { emoji:"✍️", name:"필사 동아리",            schedule:null, leader:"김유정", phone:"010-2412-4624", insta:null },
   ];
   return (
     <div style={S.page}>
@@ -473,19 +473,25 @@ function ClubPage({ nav }) {
         <span />
       </div>
       <div style={{ background:"#e8f4ec", border:"1.5px solid #c8dfd0", borderRadius:14, padding:"14px 16px", marginBottom:16, textAlign:"center" }}>
-        <p style={{ margin:0, fontSize:13, color:"#3a5a45", lineHeight:1.8 }}>참여나 구체적인 일정 확인 원하시면<br/>담당 새가족 목자에게 연락주세요 😊</p>
-        <p style={{ margin:"6px 0 0", fontSize:12, color:"#4a7c59", fontWeight:600 }}>각 동아리 팀장님들 연결해드릴게요!</p>
+        <p style={{ margin:0, fontSize:13, color:"#3a5a45", lineHeight:1.8 }}>일정 및 가입 문의는<br/>각 동아리 팀장님께 편하게 연락주세요 😊</p>
+        <p style={{ margin:"6px 0 0", fontSize:12, color:"#4a7c59", fontWeight:600 }}>관심 있는 동아리에 부담 없이 함께해요!</p>
       </div>
       {clubs.map(club => (
-        <div key={club.name} style={{ ...S.card, marginBottom:10 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:(club.schedule||club.insta)?8:0 }}>
+        <div key={club.name} style={{ ...S.card, marginBottom:10, display:"flex", flexDirection:"column", gap:8 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             <span style={{ fontSize:28 }}>{club.emoji}</span>
             <b style={{ fontSize:15, color:"#1a3a2a" }}>{club.name}</b>
           </div>
           {club.schedule && (
-            <div style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 12px", background:"#f5faf7", borderRadius:10, marginBottom: club.insta ? 8 : 0 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 12px", background:"#f5faf7", borderRadius:10 }}>
               <span style={{ fontSize:13 }}>📅</span>
               <p style={{ margin:0, fontSize:13, color:"#3a5a45", lineHeight:1.6 }}>{club.schedule}</p>
+            </div>
+          )}
+          {club.leader && (
+            <div style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 12px", background:"#f5faf7", borderRadius:10 }}>
+              <span style={{ fontSize:13 }}>👤</span>
+              <p style={{ margin:0, fontSize:13, color:"#3a5a45", lineHeight:1.6 }}>팀장 {club.leader} · <a href={`tel:${club.phone.replace(/-/g,"")}`} style={{ color:"#2563a6", textDecoration:"none", fontWeight:700 }}>{club.phone}</a></p>
             </div>
           )}
           {club.insta && (
