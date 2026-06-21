@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { db } from "./firebase";
-import { ref, onValue, set } from "firebase/database";
+import { ref, onValue, set, update } from "firebase/database";
 
 const DEFAULT_MISSIONS = [
   { name: "큐티 인증",              talent: 10   },
@@ -50,6 +50,15 @@ const MISSION_DESC = {
 
 const VERSE = { ref: "골로새서 3:15", text: "그리스도의 평강이 너희 마음을 주장하게 하라 너희는 평강을 위하여 한 몸으로 부르심을 받았나니" };
 const ADMIN_PASSWORD = "1235";
+
+const TALENT_BOOTHS = [
+  { name:"은혜의 노래방", hint:"찬양 부르기 · 50" },
+  { name:"행운의 과일가게", hint:"파친코 · 3개 30 / 2개 10" },
+  { name:"퐁당 오락실", hint:"탁구공 · 1번줄 20 / 그 외 10" },
+  { name:"풍선 농구장", hint:"풍선 넣기 · 단계당 10" },
+  { name:"누구게 사진관", hint:"운영진 10 / 성경 인물 30" },
+  { name:"땅끝 정거장", hint:"선교 이야기 듣기 · 20" },
+];
 
 function safeName(name) {
   return name.replace(/[.#$[\]/]/g, "_");
@@ -233,6 +242,10 @@ function BingoPage({ member, missions, updateMember, nav, qtPosts }) {
   const [descIdx, setDescIdx] = useState(null);
   const [hiddenTalent, setHiddenTalent] = useState("");
   const [adminVerifyPw, setAdminVerifyPw] = useState("");
+  const [boothPending, setBoothPending] = useState(null);
+  const [boothPw, setBoothPw] = useState("");
+  const [boothAmt, setBoothAmt] = useState("");
+  const [boothErr, setBoothErr] = useState("");
   const bingoCount = checkBingo(member.checked);
 
   const handleCell = i => {
@@ -277,6 +290,17 @@ function BingoPage({ member, missions, updateMember, nav, qtPosts }) {
     updateMember(member.name, m => ({ ...m, checked:newChecked, checkedTalent:newCT, talent:Math.max(0,m.talent+missionDelta+bonusDelta), ...(i===12?{donkeyChecked:!wasChecked}:{}) }));
   };
 
+  const openBooth = name => { setBoothPending(name); setBoothPw(""); setBoothAmt(String((member.boothTalent||{})[name]||"")); setBoothErr(""); };
+  const confirmBooth = () => {
+    if (boothPw!==ADMIN_PASSWORD) { setBoothErr("비밀번호가 틀렸습니다"); return; }
+    const amt = Math.max(0, parseInt(boothAmt,10)||0);
+    const prevBT = member.boothTalent||{};
+    const delta = amt - (prevBT[boothPending]||0);
+    const newBT = { ...prevBT, [boothPending]:amt };
+    update(ref(db,"members/"+safeName(member.name)), { talent:Math.max(0,member.talent+delta), boothTalent:newBT });
+    setBoothPending(null); setBoothPw(""); setBoothAmt(""); setBoothErr("");
+  };
+
   const latestPost = qtPosts&&qtPosts[0];
   const showQtAlert = latestPost&&!(latestPost.comments||[]).some(c => c.author===member.name);
 
@@ -315,6 +339,22 @@ function BingoPage({ member, missions, updateMember, nav, qtPosts }) {
             <div style={{ display:"flex", gap:8, marginTop:8 }}>
               <button style={{ ...S.btnPrimary, flex:1 }} onClick={confirmPw}>확인</button>
               <button style={{ ...S.btnGhost, flex:1 }} onClick={() => setPendingIdx(null)}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {boothPending!==null && (
+        <div style={S.overlay}>
+          <div style={S.modal}>
+            <p style={{ fontWeight:700, fontSize:15, marginBottom:4 }}>🎪 {boothPending}</p>
+            <p style={{ fontSize:13, color:"#666", marginBottom:14 }}>관리자 비밀번호와 받은 달란트를 입력하세요</p>
+            <input style={S.input} type="password" placeholder="관리자 비밀번호" value={boothPw} autoFocus onChange={e => { setBoothPw(e.target.value); setBoothErr(""); }} />
+            <input style={{ ...S.input, marginTop:4 }} type="number" inputMode="numeric" placeholder="달란트 입력 (예: 30)" value={boothAmt} onChange={e => setBoothAmt(e.target.value)} onKeyDown={e => e.key==="Enter"&&confirmBooth()} />
+            {boothErr && <p style={{ color:"#e74c3c", fontSize:13 }}>{boothErr}</p>}
+            <div style={{ display:"flex", gap:8, marginTop:8 }}>
+              <button style={{ ...S.btnPrimary, flex:1 }} onClick={confirmBooth}>지급</button>
+              <button style={{ ...S.btnGhost, flex:1 }} onClick={() => setBoothPending(null)}>취소</button>
             </div>
           </div>
         </div>
@@ -374,6 +414,24 @@ function BingoPage({ member, missions, updateMember, nav, qtPosts }) {
                 onClick={e => { e.stopPropagation(); setDescIdx(i); }}>ⓘ</button>
               <span style={S.cellName}>{m.name}</span>
               <span style={{ ...S.cellTalent, ...((showTalent==null)?S.cellTalentHidden:{}) }}>{(showTalent!=null)?"🎫"+showTalent:"🎫?"}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div style={{ background:"#fff", border:"1.5px solid #e0e0e0", borderRadius:14, padding:"14px 16px", marginBottom:16 }}>
+        <p style={{ margin:"0 0 4px", fontWeight:700, fontSize:14, color:"#1a3a2a" }}>🎪 부스 달란트</p>
+        <p style={{ margin:"0 0 10px", fontSize:12, color:"#888" }}>빙고판에 없는 게임 부스예요. 부스에서 받은 달란트를 부스 담당이 눌러서 입력해요.</p>
+        {TALENT_BOOTHS.map(b => {
+          const given = (member.boothTalent||{})[b.name];
+          return (
+            <button key={b.name} onClick={() => openBooth(b.name)}
+              style={{ width:"100%", display:"flex", alignItems:"center", justifyContent:"space-between", gap:10, padding:"11px 13px", marginBottom:7, borderRadius:11, cursor:"pointer", textAlign:"left", background: given!=null?"#e8f4ec":"#fafaf8", border: given!=null?"1.5px solid #4a7c59":"1.5px solid #e5e5e5" }}>
+              <div>
+                <div style={{ fontWeight:700, fontSize:14, color:"#1a3a2a" }}>{given!=null?"✓ ":""}{b.name}</div>
+                <div style={{ fontSize:11, color:"#999", marginTop:1 }}>{b.hint}</div>
+              </div>
+              <span style={{ fontSize:13, fontWeight:700, color: given!=null?"#2e7d32":"#bbb", whiteSpace:"nowrap" }}>{given!=null?"🎫"+given:"입력 +"}</span>
             </button>
           );
         })}
@@ -584,10 +642,13 @@ function AdminPage({ members, setMembers, missions, setMissions, qtPosts, setQtP
   const [editMissions, setEditMissions] = useState(missions.map(m=>({...m})));
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [newPost, setNewPost] = useState("");
+  const [talentInput, setTalentInput] = useState({});
 
   const addTalent = (name,amt) => {
     const m = members.find(x => x.name===name);
-    if (m) fbSet("members/"+safeName(name), { ...m, talent:Math.max(0,m.talent+amt) });
+    if (!m) return;
+    const next = Math.max(0,(m.talent||0)+amt);
+    update(ref(db,"members/"+safeName(name)), { talent: next });
   };
   const confirmDelete = () => { set(ref(db,"members/"+safeName(deleteTarget)), null); setDeleteTarget(null); };
   const saveMissions = () => { fbSet("missions", editMissions.map(m=>({...m}))); alert("저장됐어요!"); };
@@ -655,16 +716,27 @@ function AdminPage({ members, setMembers, missions, setMissions, qtPosts, setQtP
 
       {tab==="talent" && (
         <div>
+          <p style={{ fontSize:12, color:"#888", marginBottom:12 }}>숫자를 입력하고 <b style={{ color:"#4a7c59" }}>＋지급</b> 또는 <b style={{ color:"#e53935" }}>−차감</b>을 누르세요</p>
           {members.length===0 && <p style={{ color:"#aaa", textAlign:"center" }}>등록된 새가족이 없어요</p>}
-          {members.map(m => (
-            <div key={m.name} style={S.memberRow}>
-              <div><b style={{ fontSize:15 }}>{m.name}</b><p style={{ fontSize:12, color:"#aaa", margin:0 }}>🎫 {m.talent}개</p></div>
-              <div style={{ display:"flex", gap:6 }}>
-                <button style={S.btnSmall} onClick={()=>addTalent(m.name,10)}>+10</button>
-                <button style={S.btnSmall} onClick={()=>addTalent(m.name,-10)}>-10</button>
+          {members.map(m => {
+            const v = talentInput[m.name] ?? "";
+            const apply = (sign) => {
+              const num = Math.abs(parseInt(v,10));
+              if (!num || isNaN(num)) return;
+              addTalent(m.name, sign*num);
+              setTalentInput(s => ({ ...s, [m.name]:"" }));
+            };
+            return (
+              <div key={m.name} style={S.memberRow}>
+                <div><b style={{ fontSize:15 }}>{m.name}</b><p style={{ fontSize:12, color:"#aaa", margin:0 }}>🎫 {m.talent}개</p></div>
+                <div style={{ display:"flex", gap:6, alignItems:"center" }}>
+                  <input style={{ ...S.input, marginBottom:0, width:58, fontSize:14, textAlign:"center", padding:"8px 6px" }} type="number" inputMode="numeric" placeholder="수" value={v} onChange={e=>setTalentInput(s=>({ ...s, [m.name]:e.target.value }))} onKeyDown={e=>e.key==="Enter"&&apply(1)} />
+                  <button style={{ ...S.btnSmall, background:"#4a7c59", color:"#fff", fontSize:16, padding:"6px 11px" }} onClick={()=>apply(1)}>＋</button>
+                  <button style={{ ...S.btnSmall, background:"#e53935", color:"#fff", fontSize:16, padding:"6px 11px" }} onClick={()=>apply(-1)}>−</button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -777,5 +849,6 @@ const S = {
   tabActive:       { background:"#4a7c59", color:"#fff" },
   memberRow:       { display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 14px", background:"#fafaf8", borderRadius:12, marginBottom:8, border:"1px solid #eee" },
 };
+
 
 
